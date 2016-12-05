@@ -16,28 +16,32 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.herprogramacion.lawyersapp.R;
-import com.herprogramacion.lawyersapp.data.Lawyer;
-import com.herprogramacion.lawyersapp.data.LawyersDbHelper;
+import com.herprogramacion.lawyersapp.data.Alumnos;
+import com.herprogramacion.lawyersapp.data.AlumnosDbHelper;
 
 /**
- * Vista para creación/edición de un abogado
+ * Vista para creación/edición de un alumno :-)
  */
 public class AddEditLawyerFragment extends Fragment {
     private static final String ARG_LAWYER_ID = "arg_lawyer_id";
 
     private String mLawyerId;
 
-    private LawyersDbHelper mLawyersDbHelper;
+    private AlumnosDbHelper mLawyersDbHelper;
 
     private FloatingActionButton mSaveButton;
-    private TextInputEditText mNameField;
-    private TextInputEditText mPhoneNumberField;
-    private TextInputEditText mSpecialtyField;
-    private TextInputEditText mBioField;
-    private TextInputLayout mNameLabel;
-    private TextInputLayout mPhoneNumberLabel;
-    private TextInputLayout mSpecialtyLabel;
-    private TextInputLayout mBioLabel;
+
+    private TextInputEditText mDniField;
+    private TextInputEditText mNombreField;
+    private TextInputEditText mTelefonoField;
+    private TextInputEditText mCursoField;
+    private TextInputEditText mEmailField;
+
+    private TextInputLayout mDniLabel;
+    private TextInputLayout mNombreLabel;
+    private TextInputLayout mTelefonoLabel;
+    private TextInputLayout mCursoLabel;
+    private TextInputLayout mEmailLabel;
 
 
     public AddEditLawyerFragment() {
@@ -63,18 +67,22 @@ public class AddEditLawyerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_add_edit_lawyer, container, false);
+        View root = inflater.inflate(R.layout.faragment_add_edit_alumno, container, false);
 
         // Referencias UI
         mSaveButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        mNameField = (TextInputEditText) root.findViewById(R.id.et_name);
-        mPhoneNumberField = (TextInputEditText) root.findViewById(R.id.et_phone_number);
-        mSpecialtyField = (TextInputEditText) root.findViewById(R.id.et_specialty);
-        mBioField = (TextInputEditText) root.findViewById(R.id.et_bio);
-        mNameLabel = (TextInputLayout) root.findViewById(R.id.til_name);
-        mPhoneNumberLabel = (TextInputLayout) root.findViewById(R.id.til_phone_number);
-        mSpecialtyLabel = (TextInputLayout) root.findViewById(R.id.til_specialty);
-        mBioLabel = (TextInputLayout) root.findViewById(R.id.til_bio);
+
+        mDniField = (TextInputEditText) root.findViewById(R.id.et_dni);
+        mNombreField = (TextInputEditText) root.findViewById(R.id.et_nombre);
+        mTelefonoField = (TextInputEditText) root.findViewById(R.id.et_telefono);
+        mCursoField = (TextInputEditText) root.findViewById(R.id.et_curso);
+        mEmailField = (TextInputEditText) root.findViewById(R.id.et_email);
+
+        mDniLabel =  (TextInputLayout) root.findViewById(R.id.til_dni);
+        mNombreLabel = (TextInputLayout) root.findViewById(R.id.til_nombre);
+        mTelefonoLabel = (TextInputLayout) root.findViewById(R.id.til_telefono);
+        mCursoLabel = (TextInputLayout) root.findViewById(R.id.til_curso);
+        mEmailLabel = (TextInputLayout) root.findViewById(R.id.til_email);
 
         // Eventos
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +92,7 @@ public class AddEditLawyerFragment extends Fragment {
             }
         });
 
-        mLawyersDbHelper = new LawyersDbHelper(getActivity());
+        mLawyersDbHelper = new AlumnosDbHelper(getActivity());
 
         // Carga de datos
         if (mLawyerId != null) {
@@ -101,29 +109,35 @@ public class AddEditLawyerFragment extends Fragment {
     private void addEditLawyer() {
         boolean error = false;
 
-        String name = mNameField.getText().toString();
-        String phoneNumber = mPhoneNumberField.getText().toString();
-        String specialty = mSpecialtyField.getText().toString();
-        String bio = mBioField.getText().toString();
+        String dni =  mDniField.getText().toString();
+        String nombre = mNombreField.getText().toString();
+        String telefono = mTelefonoField.getText().toString();
+        String curso = mCursoField.getText().toString();
+        String email = mEmailField.getText().toString();
 
-        if (TextUtils.isEmpty(name)) {
-            mNameLabel.setError(getString(R.string.field_error));
+        if (TextUtils.isEmpty(dni)) {
+            mDniLabel.setError("Ingresa un valor");
             error = true;
         }
 
-        if (TextUtils.isEmpty(phoneNumber)) {
-            mPhoneNumberLabel.setError(getString(R.string.field_error));
+        if (TextUtils.isEmpty(nombre)) {
+            mNombreLabel.setError(getString(R.string.field_error));
             error = true;
         }
 
-        if (TextUtils.isEmpty(specialty)) {
-            mSpecialtyLabel.setError(getString(R.string.field_error));
+        if (TextUtils.isEmpty(telefono)) {
+            mTelefonoLabel.setError(getString(R.string.field_error));
+            error = true;
+        }
+
+        if (TextUtils.isEmpty(curso)) {
+            mCursoLabel.setError(getString(R.string.field_error));
             error = true;
         }
 
 
-        if (TextUtils.isEmpty(bio)) {
-            mBioLabel.setError(getString(R.string.field_error));
+        if (TextUtils.isEmpty(email)) {
+            mEmailLabel.setError(getString(R.string.field_error));
             error = true;
         }
 
@@ -131,9 +145,9 @@ public class AddEditLawyerFragment extends Fragment {
             return;
         }
 
-        Lawyer lawyer = new Lawyer(name, specialty, phoneNumber, bio, "");
+        Alumnos alumnos = new Alumnos(dni,nombre,telefono,curso,email, "");
 
-        new AddEditLawyerTask().execute(lawyer);
+        new AddEditLawyerTask().execute(alumnos);
 
     }
 
@@ -152,30 +166,32 @@ public class AddEditLawyerFragment extends Fragment {
         Toast.makeText(getActivity(),
                 "Error al agregar nueva información", Toast.LENGTH_SHORT).show();
     }
-
-    private void showLawyer(Lawyer lawyer) {
-        mNameField.setText(lawyer.getName());
-        mPhoneNumberField.setText(lawyer.getPhoneNumber());
-        mSpecialtyField.setText(lawyer.getSpecialty());
-        mBioField.setText(lawyer.getBio());
+//añadur metodos restantes
+    private void showLawyer(Alumnos alumno) {
+        mDniField.setText(alumno.getDni());
+        mNombreField.setText(alumno.getNombre());
+        mTelefonoField.setText(alumno.getTelefono());
+        mCursoField.setText(alumno.getCurso());
+        mEmailField.setText(alumno.getEmail()
+        );
     }
 
     private void showLoadError() {
         Toast.makeText(getActivity(),
-                "Error al editar abogado", Toast.LENGTH_SHORT).show();
+                "Error al editar el alumno", Toast.LENGTH_SHORT).show();
     }
 
     private class GetLawyerByIdTask extends AsyncTask<Void, Void, Cursor> {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            return mLawyersDbHelper.getLawyerById(mLawyerId);
+            return mLawyersDbHelper.getAlumnosById(mLawyerId);
         }
 
         @Override
         protected void onPostExecute(Cursor cursor) {
             if (cursor != null && cursor.moveToLast()) {
-                showLawyer(new Lawyer(cursor));
+                showLawyer(new Alumnos(cursor));
             } else {
                 showLoadError();
                 getActivity().setResult(Activity.RESULT_CANCELED);
@@ -185,15 +201,15 @@ public class AddEditLawyerFragment extends Fragment {
 
     }
 
-    private class AddEditLawyerTask extends AsyncTask<Lawyer, Void, Boolean> {
+    private class AddEditLawyerTask extends AsyncTask<Alumnos, Void, Boolean> {
 
         @Override
-        protected Boolean doInBackground(Lawyer... lawyers) {
+        protected Boolean doInBackground(Alumnos... lawyers) {
             if (mLawyerId != null) {
-                return mLawyersDbHelper.updateLawyer(lawyers[0], mLawyerId) > 0;
+                return mLawyersDbHelper.updateAlumnos(lawyers[0], mLawyerId) > 0;
 
             } else {
-                return mLawyersDbHelper.saveLawyer(lawyers[0]) > 0;
+                return mLawyersDbHelper.saveAlumnos(lawyers[0]) > 0;
             }
 
         }

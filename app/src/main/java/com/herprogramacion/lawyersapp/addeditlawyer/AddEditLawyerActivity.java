@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.herprogramacion.lawyersapp.R;
-import com.herprogramacion.lawyersapp.lawyers.LawyersActivity;
+import com.herprogramacion.lawyersapp.lawyers.MainActivity;
 
 public class AddEditLawyerActivity extends AppCompatActivity {
 
@@ -19,17 +19,16 @@ public class AddEditLawyerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String lawyerId = getIntent().getStringExtra(LawyersActivity.EXTRA_LAWYER_ID);
+        String lawyerId = getIntent().getStringExtra(MainActivity.EXTRA_LAWYER_ID);
 
         setTitle(lawyerId == null ? "Añadir abogado" : "Editar abogado");
 
-        AddEditLawyerFragment addEditLawyerFragment = (AddEditLawyerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.add_edit_lawyer_container);
+        AddEditLawyerFragment addEditLawyerFragment = (AddEditLawyerFragment) getSupportFragmentManager().findFragmentById(R.id.add_edit_alumnos_container);
         if (addEditLawyerFragment == null) {
             addEditLawyerFragment = AddEditLawyerFragment.newInstance(lawyerId);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.add_edit_lawyer_container, addEditLawyerFragment)
+                    .add(R.id.add_edit_alumnos_container, addEditLawyerFragment)
                     .commit();
         }
     }

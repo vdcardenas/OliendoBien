@@ -17,10 +17,9 @@ import android.widget.Toast;
 
 import com.herprogramacion.lawyersapp.R;
 import com.herprogramacion.lawyersapp.addeditlawyer.AddEditLawyerActivity;
-import com.herprogramacion.lawyersapp.data.LawyersDbHelper;
-import com.herprogramacion.lawyersapp.lawyerdetail.LawyerDetailActivity;
-
-import static com.herprogramacion.lawyersapp.data.LawyersContract.LawyerEntry;
+import com.herprogramacion.lawyersapp.data.AlumnosDbHelper;
+import com.herprogramacion.lawyersapp.data.Database;
+import com.herprogramacion.lawyersapp.lawyerdetail.AlumnosDetalleActivity;
 
 
 /**
@@ -29,10 +28,10 @@ import static com.herprogramacion.lawyersapp.data.LawyersContract.LawyerEntry;
 public class LawyersFragment extends Fragment {
     public static final int REQUEST_UPDATE_DELETE_LAWYER = 2;
 
-    private LawyersDbHelper mLawyersDbHelper;
+    private AlumnosDbHelper mLawyersDbHelper;
 
     private ListView mLawyersList;
-    private LawyersCursorAdapter mLawyersAdapter;
+    private AlumnoCursorAdaptador mLawyersAdapter;
     private FloatingActionButton mAddButton;
 
 
@@ -47,11 +46,11 @@ public class LawyersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_lawyers, container, false);
+        View root = inflater.inflate(R.layout.fragment_alumnos, container, false);
 
         // Referencias UI
-        mLawyersList = (ListView) root.findViewById(R.id.lawyers_list);
-        mLawyersAdapter = new LawyersCursorAdapter(getActivity(), null);
+        mLawyersList = (ListView) root.findViewById(R.id.alumnos_list);
+        mLawyersAdapter = new AlumnoCursorAdaptador(getActivity(), null);
         mAddButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
         // Setup
@@ -63,7 +62,7 @@ public class LawyersFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor currentItem = (Cursor) mLawyersAdapter.getItem(i);
                 String currentLawyerId = currentItem.getString(
-                        currentItem.getColumnIndex(LawyerEntry.ID));
+                        currentItem.getColumnIndex(Database.AlumnoEntry.dni));
 
                 showDetailScreen(currentLawyerId);
             }
@@ -76,10 +75,10 @@ public class LawyersFragment extends Fragment {
         });
 
 
-        getActivity().deleteDatabase(LawyersDbHelper.DATABASE_NAME);
+        getActivity().deleteDatabase(AlumnosDbHelper.DATABASE_NAME);
 
         // Instancia de helper
-        mLawyersDbHelper = new LawyersDbHelper(getActivity());
+        mLawyersDbHelper = new AlumnosDbHelper(getActivity());
 
         // Carga de datos
         loadLawyers();
@@ -117,8 +116,8 @@ public class LawyersFragment extends Fragment {
     }
 
     private void showDetailScreen(String lawyerId) {
-        Intent intent = new Intent(getActivity(), LawyerDetailActivity.class);
-        intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, lawyerId);
+        Intent intent = new Intent(getActivity(), AlumnosDetalleActivity.class);
+        intent.putExtra(MainActivity.EXTRA_LAWYER_ID, lawyerId);
         startActivityForResult(intent, REQUEST_UPDATE_DELETE_LAWYER);
     }
 
@@ -126,7 +125,7 @@ public class LawyersFragment extends Fragment {
 
         @Override
         protected Cursor doInBackground(Void... voids) {
-            return mLawyersDbHelper.getAllLawyers();
+            return mLawyersDbHelper.getAllAlumnos();
         }
 
         @Override
